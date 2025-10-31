@@ -1,65 +1,57 @@
-#!name=淘宝去视频栏
-#!desc=自动适配新版淘宝接口，去掉底栏“视频”标签
-#!author=李潘一
-#!version=2.0
-#!homepage=https://github.com/panyi-taobao-plugin
-#!icon=https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Icon/taobao.png
+#!name = 小红书精简底栏
+#!desc = 去除底栏「市集」和「发布加号按钮」，仅保留「首页」「消息」「我的」
+#!author = Kimi
+#!icon = https://raw.githubusercontent.com/ruanyf/weekly/main/docs/imgs/loon.png
+#!homepage = https://github.com/loon0x00/LoonExample
+#!date = 2025-10-31
+#!version = 1.0.0
+#!system = ios
+#!system_version = 16.0
+#!loon_version = 3.0.0
+#!tag = 去广告, 小红书, 界面精简
+#!dns = false
+#!mitm = true
+#!system_cert = false
+#!ca_passphrase = Loon
+#!priority = 1001
 
 [Script]
-http-response ^https:\/\/.*\.taobao\.com\/gw\/mtop\.taobao\.(apphome|getBottomTabList|homepage|idlehome) script-path=https://raw.githubusercontent.com/panyi-taobao-plugin/main/taobao_remove_video.plugin, requires-body=true, timeout=10, tag=淘宝去视频栏
-
-[MITM]
-hostname = *.taobao.com
-
-# ===== 内嵌脚本部分 =====
-[Script Content]
+# 小红书底栏精简
+http-response ^https?:\/\/edith\.xiaohongshu\.com\/api\/sns\/v\d\/system_service\/splash_config requires-body=true, timeout=10, tag=小红书底栏精简, script-eval=
 /*
- * 淘宝底栏去“视频”栏插件 v2.0
- * 作者：李潘一
- * 功能：自动匹配接口结构并移除“视频”标签
+ * 小红书底栏精简脚本
+ * 仅保留「首页」「消息」「我的」
+ * 作者：Kimi
+ * 日期：2025-10-31
  */
 
-const body = $response.body;
-if (!body) $done({});
+let body = $response.body;
 
 try {
-  let obj = JSON.parse(body);
-  let modified = false;
+    let obj = JSON.parse(body);
 
-  // 尝试处理多种数据结构
-  let paths = [
-    ["data", "tabList"],
-    ["data", "bottomTabs"],
-    ["result", "tabList"],
-    ["result", "bottomTabs"]
-  ];
+    // 底栏配置路径可能为：obj.data.tab_bar 或 obj.data.bottom_tabs
+    let tabs = obj?.data?.tab_bar || obj?.data?.bottom_tabs || [];
 
-  for (let path of paths) {
-    let ref = obj;
-    for (let key of path.slice(0, -1)) ref = ref?.[key];
-    let lastKey = path[path.length - 1];
-    let list = ref?.[lastKey];
-    if (Array.isArray(list)) {
-      ref[lastKey] = list.filter(item => {
-        return !(
-          item.title?.includes("视频") ||
-          item.name?.includes("视频") ||
-          item.tabCode?.includes("video") ||
-          item.icon?.includes("video")
-        );
-      });
-      modified = true;
+    if (Array.isArray(tabs) && tabs.length > 0) {
+        const allowed = ['首页', '消息', '我的'];
+        obj.data.tab_bar = tabs.filter(tab => {
+            const name = tab?.name || tab?.title || '';
+            return allowed.includes(name);
+        });
+
+        // 移除发布按钮（加号）
+        if (obj.data?.publish_entry) {
+            delete obj.data.publish_entry;
+        }
     }
-  }
 
-  if (modified) {
-    console.log("淘宝去视频栏：成功修改底栏配置");
-    $done({ body: JSON.stringify(obj) });
-  } else {
-    console.log("淘宝去视频栏：未找到底栏元素结构");
-    $done({});
-  }
-} catch (err) {
-  console.log("淘宝去视频栏脚本出错：" + err);
-  $done({});
+    body = JSON.stringify(obj);
+} catch (e) {
+    console.log('小红书底栏精简脚本解析失败：' + e);
 }
+
+$done({ body });
+
+[Mitm]
+hostname = edith.xiaohongshu.com
