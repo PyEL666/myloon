@@ -1,12 +1,12 @@
 #!name=淘宝去视频栏
-#!desc=去掉淘宝App底栏的“视频”标签，保留首页、消息、我的等
+#!desc=自动适配新版淘宝接口，去掉底栏“视频”标签
 #!author=李潘一
-#!version=1.0
+#!version=2.0
 #!homepage=https://github.com/panyi-taobao-plugin
 #!icon=https://raw.githubusercontent.com/Tartarus2014/Loon-Script/master/Icon/taobao.png
 
 [Script]
-http-response ^https:\/\/.*\.taobao\.com\/gw\/mtop\.taobao\.apphome\.getBottomTabList script-path=https://raw.githubusercontent.com/panyi-taobao-plugin/main/taobao_remove_video.plugin, requires-body=true, timeout=10, tag=淘宝去视频栏
+http-response ^https:\/\/.*\.taobao\.com\/gw\/mtop\.taobao\.(apphome|getBottomTabList|homepage|idlehome) script-path=https://raw.githubusercontent.com/panyi-taobao-plugin/main/taobao_remove_video.plugin, requires-body=true, timeout=10, tag=淘宝去视频栏
 
 [MITM]
 hostname = *.taobao.com
@@ -14,33 +14,52 @@ hostname = *.taobao.com
 # ===== 内嵌脚本部分 =====
 [Script Content]
 /*
- * 淘宝底栏去“视频”栏插件
+ * 淘宝底栏去“视频”栏插件 v2.0
  * 作者：李潘一
- * 功能：拦截 mtop.taobao.apphome.getBottomTabList 接口，移除“视频”项
- * 用法：Loon 插件直接导入，无需外链 JS
+ * 功能：自动匹配接口结构并移除“视频”标签
  */
 
 const body = $response.body;
-if (body) {
-  try {
-    let obj = JSON.parse(body);
+if (!body) $done({});
 
-    if (obj?.data?.tabList) {
-      // 过滤掉包含“视频”关键字的标签
-      obj.data.tabList = obj.data.tabList.filter(item => {
+try {
+  let obj = JSON.parse(body);
+  let modified = false;
+
+  // 尝试处理多种数据结构
+  let paths = [
+    ["data", "tabList"],
+    ["data", "bottomTabs"],
+    ["result", "tabList"],
+    ["result", "bottomTabs"]
+  ];
+
+  for (let path of paths) {
+    let ref = obj;
+    for (let key of path.slice(0, -1)) ref = ref?.[key];
+    let lastKey = path[path.length - 1];
+    let list = ref?.[lastKey];
+    if (Array.isArray(list)) {
+      ref[lastKey] = list.filter(item => {
         return !(
           item.title?.includes("视频") ||
+          item.name?.includes("视频") ||
           item.tabCode?.includes("video") ||
-          item.name?.includes("视频")
+          item.icon?.includes("video")
         );
       });
+      modified = true;
     }
+  }
 
+  if (modified) {
+    console.log("淘宝去视频栏：成功修改底栏配置");
     $done({ body: JSON.stringify(obj) });
-  } catch (err) {
-    console.log("淘宝去视频栏脚本出错：" + err);
+  } else {
+    console.log("淘宝去视频栏：未找到底栏元素结构");
     $done({});
   }
-} else {
+} catch (err) {
+  console.log("淘宝去视频栏脚本出错：" + err);
   $done({});
 }
