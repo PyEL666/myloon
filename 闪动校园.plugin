@@ -1,12 +1,5 @@
-# 禁止 MITM 解密 api.huachenjie.com
-# 严格符合 Loon 插件编写要求
-
-[Plugin]
-# 插件基本信息
-name = 禁止 MITM api.huachenjie.com
-author = Copilot
-desc = 启用 MITM，但强制跳过 api.huachenjie.com
-version = 1.0
+#!name=闪动校园
+#!desc=启用 MITM，但强制跳过 api.huachenjie.com 的解密
 
 [MITM]
 enable = true
