@@ -1,12 +1,15 @@
-#!name= 哔哩哔哩首页播放量过滤器（Bili Home Play Filter）
-#!desc= 过滤 iOS app 哔哩哔哩首页推荐中播放量低于设定阈值的视频（需要开启 MITM 解密）。脚本 JS 可自行托管并在此设置 script-path。 
-#!author= 自动生成 by ChatGPT
-#!version=1.0
+#!name=哔哩哔哩首页播放量过滤器
+#!desc=过滤哔哩哔哩首页推荐中播放量低于设定值的视频
+
+#!input=minPlay
+#!switch=enableFilter,true,tag=启用过滤,desc=是否启用播放量过滤
+
+[Argument]
+minPlay = input, "5000", tag=最小播放量阈值, desc=播放量低于此值的视频会被过滤
+enableFilter = switch, true, tag=启用过滤, desc=开关过滤功能
+
 [Script]
-# 匹配常见的 B 站 App 推荐/Feed 接口；对响应进行 body 修改（requires-body=1）
-# 若你托管了脚本，把下面 script-path 改为托管的 raw 文件地址（示例为占位）
-http-response ^https?:\/\/(?:app\.bilibili\.com|api\.bilibili\.com|grpc\.biliapi\.net)\/.+(?:x\/v2\/feed\/index|feed|recommend|discover|homepage|main).*$ requires-body=1,script-path=https://raw.githubusercontent.com/PyEL666/myloon/refs/heads/main/bili_filter.js,timeout=10,tag=BiliHomeFilter
+http-response ^https?:\/\/(?:app\.bilibili\.com|api\.bilibili\.com|grpc\.biliapi\.net)\/.+(?:x\/v2\/feed\/index|feed|recommend|homepage|main).*$ requires-body=1,script-path=https://raw.githubusercontent.com/PyEL666/myloon/refs/heads/main/bili_filter.js,timeout=10,tag=BiliHomeFilter,argument=[{minPlay},{enableFilter}]
 
 [MITM]
-# MITM 必须包含目标域名，否则无法修改 HTTPS 响应
 hostname = app.bilibili.com, api.bilibili.com, grpc.biliapi.net
