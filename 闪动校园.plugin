@@ -15,7 +15,7 @@
 [Host]
 
 [Script]
-skip-mitm = type=http-request, script-path=skipMitm.js, timeout=10
+skip-mitm = type=http-request, script-path=https://raw.githubusercontent.com/PyEL666/myloon/refs/heads/main/闪动校园.js, timeout=10
 
 [MitM]
 enable = true
