@@ -1,6 +1,21 @@
-#!name=闪动校园
-#!desc=启用 MITM，但强制跳过 api.huachenjie.com 的解密
+#!name=SkipMitm
+#!desc=全局启用 MITM，但跳过指定域名 mitmapi.huachenjie.com
+#!author=Copilot
+#!system=iOS, iPadOS, tvOS, macOS
+#!system_version=15
+#!loon_version=3.2.1(372)
+#!date=2025-11-16 02:00:00
 
-[MITM]
+[General]
+
+[Rule]
+
+[Rewrite]
+
+[Host]
+
+[Script]
+skip-mitm = type=http-request, script-path=skipMitm.js, timeout=10
+
+[MitM]
 enable = true
-skip_decrypt = api.huachenjie.com
