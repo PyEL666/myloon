@@ -1,15 +1,15 @@
-#!name=哔哩哔哩首页播放量过滤器
-#!desc=过滤哔哩哔哩首页推荐中播放量低于设定值的视频
+[Plugin]
+name = BiliPlayFilter
+desc = 过滤首页推荐低播放量视频
+version = 1.0
+scriptings = bili_filter.js
+icons = https://fastly.jsdelivr.net/gh/PyEL666/icons@main/bili.png
 
-#!input=minPlay
-#!switch=enableFilter,true,tag=启用过滤,desc=是否启用播放量过滤
-
-[Argument]
-minPlay = input, "5000", tag=最小播放量阈值, desc=播放量低于此值的视频会被过滤
-enableFilter = switch, true, tag=启用过滤, desc=开关过滤功能
+[Rule]
+DOMAIN,app.bilibili.com,script
 
 [Script]
-http-response ^https?:\/\/(?:app\.bilibili\.com|api\.bilibili\.com|grpc\.biliapi\.net)\/.+(?:x\/v2\/feed\/index|feed|recommend|homepage|main).*$ requires-body=1,script-path=https://raw.githubusercontent.com/PyEL666/myloon/refs/heads/main/bili_filter.js,timeout=10,tag=BiliHomeFilter,argument=[{minPlay},{enableFilter}]
+http-response ^https?:\/\/app\.bilibili\.com\/x\/v2\/feed\/index script-path=https://raw.githubusercontent.com/PyEL666/myloon/refs/heads/main/bili_filter.js, requires-body=true, tag=BiliPlayFilter
 
-[MITM]
-hostname = app.bilibili.com, api.bilibili.com, grpc.biliapi.net
+[Argument]
+minplay = 300000  # 默认过滤低于 10 万播放
