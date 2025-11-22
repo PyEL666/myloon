@@ -1,0 +1,12 @@
+[Rule]
+# Apple Relay Rules
+DOMAIN-KEYWORD,apple-relay,DIRECT
+IP-CIDR,17.248.152.113/24,DIRECT,no-resolve
+IP-CIDR,17.248.152.145/24,DIRECT,no-resolve
+DOMAIN-SUFFIX,gspe1-ssl.ls.apple.com,DIRECT
+DOMAIN-SUFFIX,apple-relay.apple.com,DIRECT
+DOMAIN-SUFFIX,cp4.cloudflare.com,DIRECT
+DOMAIN-SUFFIX,apple-relay.fastly-edge.com,DIRECT
+DOMAIN-SUFFIX,apple-relay.cloudflare.com,DIRECT
+DOMAIN-SUFFIX,smoot.apple.com,DIRECT
+DOMAIN-SUFFIX,guzzoni.apple.com,DIRECT
