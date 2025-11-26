@@ -8,5 +8,5 @@ DOMAIN-SUFFIX,apple-relay.apple.com,DIRECT
 DOMAIN-SUFFIX,cp4.cloudflare.com,DIRECT
 DOMAIN-SUFFIX,apple-relay.fastly-edge.com,DIRECT
 DOMAIN-SUFFIX,apple-relay.cloudflare.com,DIRECT
-DOMAIN-SUFFIX,smoot.apple.com,DIRECT
+DOMAIN-SUFFIX,*smoot.apple.com,DIRECT
 DOMAIN-SUFFIX,guzzoni.apple.com,DIRECT
