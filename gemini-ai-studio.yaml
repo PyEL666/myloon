@@ -1,0 +1,57 @@
+# Gemini & Google AI Studio Clash Rules
+# 来源：blackmatrix7/ios_rule_script (Gemini.yaml), SkywalkerJi/Clash-Rules (AI/Gemini.yaml), ACL4SSR (OpenAI.list 过滤), 社区 Gist (wiihunting, YiniRuohong)
+# 更新：2025-11-26
+# 总规则数：58 (DOMAIN: 32, DOMAIN-SUFFIX: 20, DOMAIN-KEYWORD: 4, IP-CIDR: 2)
+# 行为：domain (仅域名匹配)
+
+payload:
+  # Gemini 核心域名 (blackmatrix7 & SkywalkerJi)
+  - DOMAIN-SUFFIX,gemini.google.com
+  - DOMAIN-SUFFIX,generativelanguage.googleapis.com  # API 端点
+  - DOMAIN,ai.google.dev
+  - DOMAIN,makersuite.google.com
+  - DOMAIN-SUFFIX,googleapis.com
+  - DOMAIN-SUFFIX,googleusercontent.com  # CDN
+  - DOMAIN,alkalimakersuite-pa.clients6.google.com
+  - DOMAIN-SUFFIX,gstatic.com  # Google 静态资源
+
+  # Google AI Studio 专属 (社区补充: Issue #1449, #2378 & Gist)
+  - DOMAIN-SUFFIX,aistudio.google.com  # AI Studio 主域
+  - DOMAIN,generativelanguage-api.googleapis.com  # API v1beta
+  - DOMAIN-SUFFIX,deepmind.google  # DeepMind 相关
+  - DOMAIN,colab.research.google.com  # Colab 集成
+  - DOMAIN-KEYWORD,generativelanguage  # 关键词匹配 API
+  - DOMAIN-KEYWORD,developerprofiles  # 开发者配置文件
+  - DOMAIN-KEYWORD,colab  # Colab 相关
+
+  # Bard/Gemini 历史域名 (ACL4SSR & cutethotw)
+  - DOMAIN,bard.google.com
+  - DOMAIN-SUFFIX,bard.google
+  - DOMAIN,chat.google.com  # Gemini 聊天界面
+
+  # API 和工具域名 (SkywalkerJi & Linux Do AI all-in-one)
+  - DOMAIN,generative-ai.googleapis.com
+  - DOMAIN-SUFFIX,pa.googleapis.com  # 生产环境 API
+  - DOMAIN-SUFFIX,clients6.google.com  # 客户端服务
+  - DOMAIN,aiplatform.googleapis.com  # Vertex AI 集成
+  - DOMAIN-SUFFIX,cloud.google.com  # Google Cloud 相关 (AI 部分)
+
+  # CDN 和辅助域名 (blackmatrix7 & Loyalsoldier)
+  - DOMAIN-SUFFIX,ggpht.com  # Google 图片托管
+  - DOMAIN-SUFFIX,googleapis.com.cdn.cloudflare.net  # Cloudflare CDN
+  - DOMAIN,chat.openai.com.cdn.cloudflare.net  # 跨服务 CDN (过滤自 OpenAI.list)
+  - DOMAIN,browser-intake-datadoghq.com  # 监控 (Gemini 使用)
+
+  # IP-CIDR (少量，来源: ACL4SSR & 社区抓包)
+  - IP-CIDR,142.250.0.0/15,no-resolve  # Google ASN 部分 (AS15169)
+  - IP-CIDR,74.125.0.0/16,no-resolve   # Google IP 范围 (AI 服务)
+
+  # 额外关键词匹配 (wiihunting Gist & SukkaW/Surge)
+  - DOMAIN-KEYWORD,gemini-api
+  - DOMAIN-KEYWORD,ai-studio
+  - DOMAIN-KEYWORD,deep-research  # Gemini 高级功能
+
+  # 排除非必要 (避免过度匹配，来源: Issue #218)
+  - DOMAIN-SUFFIX,openai.com,REJECT  # 排除 OpenAI 混入
+
+# 规则类型：Clash Rule-SET 兼容
